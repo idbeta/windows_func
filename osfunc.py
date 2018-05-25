@@ -14,15 +14,7 @@ import binascii
 import re
 import regfunc
 from win32com.shell import shell, shellcon
-class OSVERSIONINFOW(ctypes.Structure):
-    _fields_ = [
-        ('dwOSVersionInfoSize', wintypes.c_long),
-        ('dwMajorVersion', wintypes.c_long),
-        ('dwMinorVersion', wintypes.c_long),
-        ('dwBuildNumber', wintypes.c_long),
-        ('dwPlatformId', wintypes.c_long),
-        ('szCSDVersion', ctypes.c_char_p*128),
-    ]
+
 class OSVERSIONINFOEXW(ctypes.Structure):
     _fields_ = [
         ('dwOSVersionInfoSize', wintypes.c_long),
@@ -37,6 +29,7 @@ class OSVERSIONINFOEXW(ctypes.Structure):
         ('wProductType', wintypes.c_ulong),
         ('wReserved', wintypes.c_byte),
     ]
+    
 def isWin64():        
     myhandle = pywintypes.HANDLE(win32api.GetCurrentProcess())
     ret = win32process.IsWow64Process(myhandle)
@@ -47,32 +40,58 @@ def isWin64():
     if sysInfo and (sysInfo[0] == 9 or sysInfo[0] == 6):
         return True
     return False
+    
 def isWin64_2():
     return 'PROGRAMFILES(X86)' in os.environ
 
 def getOSName():
     return platform.system()
-    
+
 def getOSVersion():
-    return platform.version()      
+    return platform.version()  
+
+class OSVERSIONINFOW(ctypes.Structure):
+    _fields_ = [
+        ('dwOSVersionInfoSize', wintypes.c_long),
+        ('dwMajorVersion', wintypes.c_long),
+        ('dwMinorVersion', wintypes.c_long),
+        ('dwBuildNumber', wintypes.c_long),
+        ('dwPlatformId', wintypes.c_long),
+        ('szCSDVersion', ctypes.c_char_p*128),
+    ]
+    
+def getSysVersionByNtdll():
+    dll = ctypes.windll.LoadLibrary('ntdll')
+    RtlGetVersion = dll.RtlGetVersion
+    osversion = OSVERSIONINFOW()
+    osversion.dwOSVersionInfoSize = ctypes.sizeof(OSVERSIONINFOW)
+    RtlGetVersion(ctypes.byref(osversion))
+    major_version = osversion.dwMajorVersion
+    minor_version = osversion.dwMinorVersion
+    dwBuildNumber = osversion.dwBuildNumber
+    dwPlatformId = osversion.dwPlatformId  ##define VER_PLATFORM_WIN32_NT   2
+    szCSDVersion = osversion.szCSDVersion
+    return (major_version, minor_version, dwBuildNumber, dwPlatformId, szCSDVersion)
+# print getOSVersion()#6.1.7601
+print getSysVersionByNtdll()# (6, 1, 7601, 2, <__main__.c_char_p_Array_128 object at 0x01796A80>)
 
 def getOSbit():
     return platform.architecture()
 
 def getWindowsVersion():
     return platform.uname()[0]+" "+platform.uname()[2]+" "+platform.uname()[3]+" "+platform.uname()[4]
-    
+
 def getIEVersion():
-    version = regfunc.getKeyValue(r'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Internet Explorer','svcVersion')
+    version = regfunc.getkeyvalue(r'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Internet Explorer','svcVersion')
     if version:
-        return version
-    version = regfunc.getKeyValue(r'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Internet Explorer','Version')
+        return version[0]
+    version = regfunc.getkeyvalue(r'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Internet Explorer','Version')
     if not version:
         # print u"获取IE版本失败"
         # sys.exit(0)
         # raise Exception在py2.7中不支持中文，除非用ansi保存代码，其实换成print+sys.exit(0)也差不多。
         raise Exception('getIEVersion fail')  
-    return version
+    return version[0]
 
 def getAllLogicalDrivers():
     '''
@@ -109,37 +128,6 @@ def getRemovableDrivers():
         if isRemovable(driver) and 'a' not in driver.lower(): #不包括A盘
             res.append(driver)
     return res 
-    
-def __get_special_path(type):
-    idList = shell.SHGetSpecialFolderLocation(0, type)
-    return shell.SHGetPathFromIDList(idList)
-
-def __getPath__(path, fileName = None):
-    if fileName:
-        fileName = os.path.basename(fileName)
-        return os.path.join(path, fileName)
-    return path
-
-def GetDesktopPath(fileName = None):
-    '''返回桌面路径'''
-    return __getPath__(__get_special_path(shellcon.CSIDL_DESKTOP), fileName)
-
-def GetStartMenuPath(fileName = None):
-    '''返回开始菜单路径'''
-    return __getPath__(__get_special_path(shellcon.CSIDL_STARTMENU), fileName)
-
-def GetFavoritePath(fileName = None):
-    '''返回收藏夹路径'''
-    return __getPath__(__get_special_path(shellcon.CSIDL_FAVORITES), fileName)
-
-def GetPersonalPath(fileName = None):
-    return __getPath__(__get_special_path(shellcon.CSIDL_PERSONAL), fileName)
-
-def GetFontsPath(fileName = None):
-    return __getPath__(__get_special_path(shellcon.CSIDL_FONTS), fileName)
-
-def GetProGramsPath(fileName = None):
-    return __getPath__(__get_special_path(shellcon.CSIDL_PROGRAMS), fileName)
 
 def GetQuickLaunchPath(fileName = None):
     path = getNormalPath(r'%appdata%\Microsoft\Internet Explorer\Quick Launch')
@@ -155,7 +143,7 @@ def DisableUAC():
 def createLink(target, arguments, path):
     return tryExcept(winshell.CreateShortcut, Target = target, Arguments = arguments, Path = path)[0]
     
-#获取时间戳
+#获取当前系统时间
 def getCurrentTime(style = '%Y-%m-%d %H:%M:%S'):
     return time.strftime(style, time.localtime())
 
@@ -209,19 +197,6 @@ def isDomainUser():
     if listUserInfo[1] and len(listUserInfo[1]) > 0:
         return True
     return False
-    
-def getSysVersionByNtdll():
-    dll = ctypes.windll.LoadLibrary('ntdll')
-    RtlGetVersion = dll.RtlGetVersion
-    osversion = OSVERSIONINFOW()
-    osversion.dwOSVersionInfoSize = ctypes.sizeof(OSVERSIONINFOW)
-    RtlGetVersion(ctypes.byref(osversion))
-    major_version = osversion.dwMajorVersion
-    minor_version = osversion.dwMinorVersion
-    dwBuildNumber = osversion.dwBuildNumber
-    dwPlatformId = osversion.dwPlatformId  ##define VER_PLATFORM_WIN32_NT   2
-    szCSDVersion = osversion.szCSDVersion
-    return (major_version, minor_version, dwBuildNumber, dwPlatformId, szCSDVersion)
         
 def getCmdOutput(cmd):
     pf = None
@@ -248,4 +223,3 @@ def ping(ip):
     '''
     print 'ping %s' % ip
     return os.system('ping %s -n 2 -w 100 1>NUL 2>NUL' % ip)
-        

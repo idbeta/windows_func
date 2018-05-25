@@ -63,18 +63,19 @@ class MODULEENTRY32(Structure):
         ('szModule', c_char * (MAX_MODULE_NAME32 + 1)),
         ('szExePath', c_char * MAX_PATH),
     ]
-##»ñÈ¡½ø³Ìid¡¢ÓÅÏÈ¼¶¡¢ÓÃ»§¡¢¸¸½ø³Ì¡¢ÃüÁîĞĞ¡¢Æô¶¯Ê±¼ä
+    
+##è·å–è¿›ç¨‹idã€ä¼˜å…ˆçº§ã€ç”¨æˆ·ã€çˆ¶è¿›ç¨‹ã€å‘½ä»¤è¡Œã€å¯åŠ¨æ—¶é—´
 def getprocessdetail(pid):
     import time
     p = psutil.Process(pid)
     # return p.as_dict()
     return p.as_dict()['pid'],p.as_dict()['nice'],p.as_dict()['username'],p.as_dict()['ppid'],p.as_dict()['cmdline'],time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(p.as_dict()['create_time']))
     
-##ÅĞ¶Ï½ø³ÌÊÇ·ñ´æÔÚ
+##åˆ¤æ–­è¿›ç¨‹æ˜¯å¦å­˜åœ¨
 def processExists(name):
     return getPidByName_1(name) != []
     
-##Ã¶¾Ù½ø³Ì
+##æšä¸¾è¿›ç¨‹
 def enumProcess():
     hSnapshot = kernel32.CreateToolhelp32Snapshot(15, 0)
     fProcessEntry32 = PROCESSENTRY32()
@@ -89,8 +90,8 @@ def enumProcess():
         processSet.append(processClass(processName, processID))
         listloop = kernel32.Process32Next(hSnapshot, byref(fProcessEntry32))
     return processSet
-# for i in enumProcess():
-    # print(i.processName,i.processID)
+for i in enumProcess():
+    print(i.processName,i.processID)
 
 def getProcList():
     CreateToolhelp32Snapshot = ctypes.windll.kernel32.CreateToolhelp32Snapshot
@@ -110,48 +111,48 @@ def getProcList():
         if Process32Next(hProcessSnap,ctypes.byref(pe32)) == False:
             break
     CloseHandle(hProcessSnap)
-# for proc in processfunc.getProcList():
+# for proc in getProcList():
     # print proc.szExeFile,proc.th32ParentProcessID
 
-##´´½¨½ø³Ì
+##åˆ›å»ºè¿›ç¨‹
 si = win32process.STARTUPINFO()
-def createProcess(szPath, user='admin'):#·Ç×èÈû
+def createProcess(szPath, user='admin'):#éé˜»å¡
     create_flags = win32process.CREATE_NEW_CONSOLE
     return win32process.CreateProcess(None, szPath, None, None, True,create_flags, None, None, si)
 
-def createProcessbysubprocess(szPath,command=None):#×èÈû
+def createProcessbysubprocess(szPath,command=None):#é˜»å¡
     if command:
         returnCode = subprocess.call(szPath+" "+command)
     else:
         returnCode = subprocess.call(szPath)
     return 'returncode:', returnCode
 
-def createProcessbyossystem(szPath,command=None):#×èÈû
+def createProcessbyossystem(szPath,command=None):#é˜»å¡
     if command:
         returnCode = os.system(szPath+" "+command)
     else:
         returnCode = os.system(szPath)
     return 'returncode:', returnCode 
 
-def createProcessbyosstartfile(szPath):#·Ç×èÈû£¬Õâ¸öÊÇ·ÇÕı³£ÓÃ·¨£¬²»ÄÜ´«ÃüÁîĞĞ²ÎÊı os.startfile("c:\\", "explore")
+def createProcessbyosstartfile(szPath):#éé˜»å¡ï¼Œè¿™ä¸ªæ˜¯éæ­£å¸¸ç”¨æ³•ï¼Œä¸èƒ½ä¼ å‘½ä»¤è¡Œå‚æ•° os.startfile("c:\\", "explore")
     returnCode = os.startfile(szPath)
     return 'returncode:', returnCode
 
-def createProcessbyShellExecute(szPath,command=None):#·Ç×èÈû
+def createProcessbyShellExecute(szPath,command=None):#éé˜»å¡
     if command:
         returnCode = win32api.ShellExecute(0,'open',szPath,command,'',1)
     else:
         returnCode = win32api.ShellExecute(0,'open',szPath, '','',1)
     return 'returncode:', returnCode
     
-def createProcessbyospopen(szPath,command=None):#×èÈû,2.6°æ¿ªÊ¼±»subprocessÌæ»»
+def createProcessbyospopen(szPath,command=None):#é˜»å¡,2.6ç‰ˆå¼€å§‹è¢«subprocessæ›¿æ¢
     if command:
         returnCode = os.popen(szPath+" "+command)
     else:
         returnCode = os.popen(szPath)
     return 'returncode:', returnCode
     
-##¸ù¾İ½ø³ÌÃû»ñÈ¡PID
+##æ ¹æ®è¿›ç¨‹åè·å–PID
 def getPidByName_1(x):
     num=[]
     for r in psutil.process_iter():
@@ -160,8 +161,15 @@ def getPidByName_1(x):
         if f.search(aa):
             num.append( aa.split('pid=')[1].split(',')[0] )
     return num
-# print getPidByName('chrome')
+# print getPidByName_1('chrome')
 
+def getPidByName_2(name):  #only32
+    pidList = []
+    pe32List = getProcessEntry32ByIdOrName(name,None)
+    for pe32 in pe32List:
+        pidList.append(pe32.th32ProcessID)
+    return pidList 
+    
 def getProcessEntry32ByIdOrName(name,pid=None):  #only32
     hSnapshot = None
     pe32List = []
@@ -185,15 +193,8 @@ def getProcessEntry32ByIdOrName(name,pid=None):  #only32
         print traceback.format_exc()
     finally:
         if hSnapshot: CloseHandle(hSnapshot)
-
-def getPidByName_2(name):  #only32
-    pidList = []
-    pe32List = getProcessEntry32ByIdOrName(name,None)
-    for pe32 in pe32List:
-        pidList.append(pe32.th32ProcessID)
-    return pidList 
     
-##¸ù¾İ½ø³ÌÃû»ñÈ¡½ø³ÌÈ«Â·¾¶
+##æ ¹æ®è¿›ç¨‹åè·å–è¿›ç¨‹å…¨è·¯å¾„
 def nametopath(x):
     num=[]
     for i in nametopid(x):
@@ -201,10 +202,10 @@ def nametopath(x):
     return num
 # print nametopath('notepad')
         
-##¸ù¾İPID»ñÈ¡½ø³ÌÃû
+##æ ¹æ®PIDè·å–è¿›ç¨‹å
 def getNameByPid_1(x):
     return psutil.Process(int(x)).name()
-# print pidtoname('sasa')
+# print getNameByPid_1('sasa')
 
 def getNameByPid_2(pid):  #only32
     pe32 = getProcessEntry32ByIdOrName(None,pid)
@@ -212,12 +213,12 @@ def getNameByPid_2(pid):  #only32
         return
     return pe32.szExeFile 
     
-##¸ù¾İPID»ñÈ¡½ø³ÌÈ«Â·¾¶
+##æ ¹æ®PIDè·å–è¿›ç¨‹å…¨è·¯å¾„
 def pidtopath(x):
     return psutil.Process(int(x)).exe()
 # print pidtopath('1280')
 
-##Ã¶¾Ù½ø³ÌÄ£¿é
+##æšä¸¾è¿›ç¨‹æ¨¡å—
 def getModuleByPid(pid):
     res = {}
     res[pid] = []
@@ -245,10 +246,11 @@ def getModuleByName(name):
                 res[pid].append(me32.szExePath.lower())
         CloseHandle(snapMod);
     return res 
-
+    
+#æšä¸¾è¿›ç¨‹åŠ è½½çš„æ¨¡å—åˆ—è¡¨
 def listProcessModules(pid):
     '''
-    32Î»½ø³Ì²»ÄÜÃ¶¾Ù64Î»½ø³Ì
+    32ä½è¿›ç¨‹ä¸èƒ½æšä¸¾64ä½è¿›ç¨‹
     '''
     hprocess = None
     modules = []
@@ -265,14 +267,14 @@ def listProcessModules(pid):
         if hprocess:
             win32api.CloseHandle(hprocess)
     
-##»ñÈ¡½ø³ÌµÄGDIÊıÁ¿
+##è·å–è¿›ç¨‹çš„GDIæ•°é‡
 def getProcessGDI(pid):
     proc = win32api.OpenProcess(win32con.PROCESS_QUERY_INFORMATION | win32con.PROCESS_VM_READ | win32con.PROCESS_ALL_ACCESS, False, pid)
     gdi = win32process.GetGuiResources( proc.handle, win32con.GR_GDIOBJECTS)
     proc.close
     return gdi
         
-##É±½ø³Ì
+##æ€è¿›ç¨‹
 def killprocess(x):
     if x.isdigit():
         psutil.Process(int(x)).terminate()
@@ -284,7 +286,7 @@ def getChildPid(pid):
     procList = getProcList()
     for proc in procList:
         if proc.th32ParentProcessID == pid:
-            yield proc.th32ProcessID#µÈÓÚ·µ»ØÒ»¸ölist
+            yield proc.th32ProcessID#ç­‰äºè¿”å›ä¸€ä¸ªlist
             
 OpenProcess = windll.kernel32.OpenProcess
 OpenProcess.argtypes = [c_void_p, c_int, c_long]
@@ -298,35 +300,25 @@ def killPid(pid):
     handle = win32api.OpenProcess(win32con.PROCESS_ALL_ACCESS, 0, pid)
     win32api.TerminateProcess(handle,0)
     
-def killProcessbycmd(imgName, killChild = False, force = True):
-    flag = '/T'
-    if not killChild:
-        flag = ''
-    if force:
-        force = '/F'
-    else:
-        force = ''
-    cmd = 'taskkill %s %s /IM %s 1> NUL 2> NUL' % (force, flag, imgName)
-    os.system(cmd)
-    
-##É±½ø³ÌÊ÷
+   
+##æ€è¿›ç¨‹æ ‘
 def killprocesstree(x):
-    if x.isdigit():#¸ù¾İpidÉ±
+    if x.isdigit():#æ ¹æ®pidæ€
         for pid in psutil.pids():
             if psutil.Process(int(pid)).ppid()==int(x):                
                 psutil.Process(int(pid)).terminate()
         psutil.Process(int(x)).terminate()
-    else:#¸ù¾İ½ø³ÌÃûÉ±
+    else:#æ ¹æ®è¿›ç¨‹åæ€
         try:
-            for pid in psutil.pids():#É±×Ó½ø³Ì
+            for pid in psutil.pids():#æ€å­è¿›ç¨‹
                 if str(psutil.Process(int(pid)).ppid()) in nametopid(x): #if 'a' in theList:
                     psutil.Process(int(pid)).terminate()
-            for i in nametopid(x):#É±¸¸½ø³Ì
+            for i in nametopid(x):#æ€çˆ¶è¿›ç¨‹
                 psutil.Process(int(i)).terminate()
         except Exception,info:
             return "input the right pname!"
  
-##»ñÈ¡½ø³ÌÄÚ´æÕ¼ÓÃ , psutil does not expose the private working set
+##è·å–è¿›ç¨‹å†…å­˜å ç”¨ , psutil does not expose the private working set
 def getprocessmem(x):
     if x.isdigit():
         return psutil.Process(int(x)).memory_info()
@@ -335,7 +327,7 @@ def getprocessmem(x):
             return psutil.Process(int(i)).memory_info()
 # print getprocessmem('236')
  
-##»ñÈ¡½ø³ÌCPUÕ¼ÓÃ
+##è·å–è¿›ç¨‹CPUå ç”¨
 def getprocesscpu(x):
     if x.isdigit():
         return psutil.Process(int(x)).cpu_percent(interval=1.0) / psutil.cpu_count()
@@ -345,7 +337,7 @@ def getprocesscpu(x):
             num.append(psutil.Process(int(i)).cpu_percent(interval=1.0) / psutil.cpu_count() )
         return num
         
-##×¢Èëdll
+##æ³¨å…¥dll
 def injectDll(pid, path, buf = ctypes.create_unicode_buffer(256)):
     proc = None
     try:
@@ -368,7 +360,7 @@ def injectDll(pid, path, buf = ctypes.create_unicode_buffer(256)):
         if proc:
             proc.close()
             
-##ÊÍ·Å½ø³Ì×¢ÈëµÄDLL
+##é‡Šæ”¾è¿›ç¨‹æ³¨å…¥çš„DLL
 def unloadDll(pid,libName):
     proc = None
     hModuleSnap = c_void_p(0)  
@@ -390,7 +382,7 @@ def unloadDll(pid,libName):
                 break
             ret = ctypes.windll.kernel32.Module32Next( hModuleSnap , pointer(me32) )  
         if not mod:
-            print 'Ã»ÓĞÔÚ½ø³ÌÖĞÕÒµ½DLLÄ£¿é'
+            print u'æ²¡æœ‰åœ¨è¿›ç¨‹ä¸­æ‰¾åˆ°DLLæ¨¡å—'
             return False
         proc = win32api.OpenProcess(win32con.PROCESS_ALL_ACCESS, 0, pid)
         faddr = win32api.GetProcAddress(win32api.GetModuleHandle('kernel32'), 'FreeLibrary')
