@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 #coding=utf-8 
 
-import os,sys,ctypes,win32con,winnt,win32api,struct,win32file,pywintypes
+import os,sys,ctypes
+import win32con,winnt,win32api,struct,win32file,pywintypes
 import traceback
 import binascii
 import re
