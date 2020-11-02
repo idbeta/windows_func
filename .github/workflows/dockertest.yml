@@ -16,5 +16,5 @@ jobs:
       - name: Run with Docker
         run: |
           docker build -t apisix:latest .
-          docker run -d -p 9080:9080 apisix:dev
+          docker run -d -p 9080:9080 apisix:latest
 
