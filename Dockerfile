@@ -11,6 +11,7 @@ RUN mkdir apisix-2.0
 RUN cd apisix-2.0
 RUN wget https://downloads.apache.org/apisix/2.0/apache-apisix-2.0-src.tgz
 RUN tar zxvf apache-apisix-2.0-src.tgz
+RUN PWD
 RUN make deps
 RUN ./bin/apisix start
 EXPOSE 9080
