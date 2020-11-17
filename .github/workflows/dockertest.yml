@@ -9,6 +9,8 @@ on:
       - master
 
 jobs:
+  my_first_job:
+  name: My first job
   build:
     runs-on: ubuntu-latest
     steps:
@@ -19,7 +21,8 @@ jobs:
         working-directory: ./example
         run: docker run -it -d -v /usr/local/example/dep.sh:/usr/local/dep.sh --name centos7 centos7 /bin/bash
 
-jobs:
+  my_first_job:
+  name: My first job
   build:
     runs-on: ubuntu-latest
     container: centos7
