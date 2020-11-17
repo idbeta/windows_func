@@ -13,5 +13,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: use docker-compose
-        run: cd ./example && docker-compose -p cent0s7-apisix up -d
+      - name: build centos7
+        run: docker build -t centos7 .
+      - name: run centos7
+        working-directory: ./example
+        run: docker run -it -d -v /usr/local/example/dep.sh:/usr/local/dep.sh --name centos7 centos7 /bin/bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: centos7
+    steps:
+        - name: Checkout Project
+          uses: actions/checkout@v2
+
+        - name: Intall Zip
+          working-directory: /usr/local
+          run: |             
+            bash ./dep.sh
