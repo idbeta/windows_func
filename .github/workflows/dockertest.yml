@@ -10,27 +10,27 @@ on:
 
 jobs:
   my_first_job:
-  name: My first job
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: build centos7
-        run: docker build -t centos7 .
-      - name: run centos7
-        working-directory: ./example
-        run: docker run -it -d -v /usr/local/example/dep.sh:/usr/local/dep.sh --name centos7 centos7 /bin/bash
+    name: My first job
+    build:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+        - name: build centos7
+          run: docker build -t centos7 .
+        - name: run centos7
+          working-directory: ./example
+          run: docker run -it -d -v /usr/local/example/dep.sh:/usr/local/dep.sh --name centos7 centos7 /bin/bash
 
   my_first_job:
-  name: My first job
-  build:
-    runs-on: ubuntu-latest
-    container: centos7
-    steps:
-        - name: Checkout Project
-          uses: actions/checkout@v2
+    name: My first job
+    build:
+      runs-on: ubuntu-latest
+      container: centos7
+      steps:
+          - name: Checkout Project
+            uses: actions/checkout@v2
 
-        - name: Intall Zip
-          working-directory: /usr/local
-          run: |             
-            bash ./dep.sh
+          - name: Intall Zip
+            working-directory: /usr/local
+            run: |             
+              bash ./dep.sh
