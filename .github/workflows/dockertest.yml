@@ -1,4 +1,4 @@
-name: Deploy with Docker
+name: test_apisix_on_centos7
 
 on:
   push:
