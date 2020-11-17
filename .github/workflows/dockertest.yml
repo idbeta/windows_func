@@ -40,11 +40,13 @@ jobs:
         yum install -y openresty curl git gcc luarocks lua-devel which
         etcd &
         PATH=$PATH:/usr/local/openresty/luajit/bin:/usr/local/openresty/nginx/sbin:/usr/local/openresty/bin
-        mkdir apisix
         
+
     - name: run apisix
       working-directory: ./apisix
       run: |
+        mkdir apisix
+        cd apisix
         wget https://downloads.apache.org/apisix/2.0/apache-apisix-2.0-src.tgz
         tar zxvf apache-apisix-2.0-src.tgz
         make deps
