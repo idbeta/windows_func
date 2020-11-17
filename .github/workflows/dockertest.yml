@@ -13,13 +13,13 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: build centos7
-      run: docker build -t centos7 .
+   # - name: build centos7
+   #   run: docker build -t centos7 .
       
     - name: run centos7
       working-directory: ./example
-      run: docker run -it -d -v /usr/local/example/deps.sh:/usr/local/deps.sh --name centos7 centos7 /bin/bash
-
+      run: docker run -it -d -v /usr/local/example/deps.sh:/usr/local/deps.sh --name centos7 docker.io/centos:7 /bin/bash
+           
         
   intall_deps:
     name: intall_deps
