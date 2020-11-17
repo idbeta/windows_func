@@ -43,12 +43,9 @@ jobs:
         
 
     - name: run apisix
-      working-directory: ./apisix
       run: |
         mkdir apisix
         cd apisix
         wget https://downloads.apache.org/apisix/2.0/apache-apisix-2.0-src.tgz
         tar zxvf apache-apisix-2.0-src.tgz
         make deps
-
-      
