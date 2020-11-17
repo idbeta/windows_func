@@ -16,5 +16,5 @@ jobs:
       - name: Run with Docker
         run: |
           docker build -t apisix:latest .
-          docker run -d -p 9080:9080 apisix:latest
-
+          docker run -it -d --name etcd -p 2379:2379 bitnami/etcd
+          docker run -it -d -p 9080:9080 -p 9443:9443 apisix:latest
