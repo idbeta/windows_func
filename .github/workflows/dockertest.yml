@@ -31,4 +31,22 @@ jobs:
     - name: Intall deps
       run: |
         yum -y install wget tar gcc automake autoconf libtool make
+        wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+        rpm -ivh epel-release-latest-7.noarch.rpm
+        wget https://github.com/etcd-io/etcd/releases/download/v3.4.13/etcd-v3.4.13-linux-amd64.tar.gz
+        tar -xvf etcd-v3.4.13-linux-amd64.tar.gz && cd etcd-v3.4.13-linux-amd64 && cp -a etcd etcdctl /usr/bin/
+        yum install yum-utils
+        yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
+        yum install -y openresty curl git gcc luarocks lua-devel which
+        etcd &
+        PATH=$PATH:/usr/local/openresty/luajit/bin:/usr/local/openresty/nginx/sbin:/usr/local/openresty/bin
+        mkdir apisix
+        
+    - name: run apisix
+      working-directory: ./apisix
+      run: |
+        wget https://downloads.apache.org/apisix/2.0/apache-apisix-2.0-src.tgz
+        tar zxvf apache-apisix-2.0-src.tgz
+        make deps
+
       
