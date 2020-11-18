@@ -6,21 +6,7 @@ on:
   pull_request:
     branches: [ master ]
 
-jobs:
-  # build_and_run_centos:
-  #   name: build_and_run_centos
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/checkout@v2
-
-   # - name: build centos7
-   #   run: docker build -t centos7 .
-      
-    # - name: run centos7
-      # working-directory: ./example
-      # run: docker run -it -d -v /usr/local/example/deps.sh:/usr/local/deps.sh --name centos7 docker.io/centos:7 /bin/bash
-           
-        
+jobs:     
   intall_deps:
     name: intall_deps
     runs-on: ubuntu-latest
@@ -49,3 +35,6 @@ jobs:
         wget https://downloads.apache.org/apisix/2.0/apache-apisix-2.0-src.tgz
         tar zxvf apache-apisix-2.0-src.tgz
         make deps
+        ./bin/apisix start
+        curl http://127.0.0.1:9080/apisix/status
+
