@@ -16,7 +16,8 @@ jobs:
  
     - name: intall deps
       run: |
-        yum -y install wget tar gcc automake autoconf libtool make
+        yum install -y wget tar gcc automake autoconf libtool make
+        yum install -y curl git luarocks lua-devel which
         wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
         rpm -ivh epel-release-latest-7.noarch.rpm
         wget https://github.com/etcd-io/etcd/releases/download/v3.4.13/etcd-v3.4.13-linux-amd64.tar.gz
@@ -27,7 +28,6 @@ jobs:
         yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
         yum install -y openresty-debug
         yum install -y openresty
-        yum install -y curl git gcc luarocks lua-devel which
         PATH=$PATH:/usr/local/openresty/luajit/bin:/usr/local/openresty/nginx/sbin:/usr/local/openresty/bin
 
     - name: download apisix
