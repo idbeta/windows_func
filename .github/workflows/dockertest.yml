@@ -23,7 +23,6 @@ jobs:
         tar -xvf etcd-v3.4.13-linux-amd64.tar.gz && cd etcd-v3.4.13-linux-amd64 && cp -a etcd etcdctl /usr/bin/
         yum install -y yum-utils
         yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
-        yum check-update
         yum install -y openresty-debug
         yum install -y openresty
         yum install -y curl git gcc luarocks lua-devel which
