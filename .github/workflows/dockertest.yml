@@ -7,8 +7,8 @@ on:
     branches: [ master ]
 
 jobs:     
-  intall_deps:
-    name: intall_deps
+  test_apisix:
+    name: test_apisix
     runs-on: ubuntu-latest
     container: docker.io/centos:7
     steps:
@@ -38,3 +38,18 @@ jobs:
         ./bin/apisix start
         curl http://127.0.0.1:9080/apisix/status
 
+
+    # - name: run admin test
+    #   run: |
+    #     sudo apt install -y cpanminus build-essential libncurses5-dev libreadline-dev libssl-dev etcd
+
+    #     yum install perl-devel
+    #     yum install perl-CPAN
+    #     curl -L http://cpanmin.us | perl - --sudo App::cpanminus
+    #     sudo cpanm --notest Test::Nginx IPC::Run > build.log 2>&1 || (cat build.log && exit 1)
+    #     cpanm install Digest::MD5
+    #     cpanm install Digest::SHA
+
+    #     export PERL5LIB=.:$PERL5LIB
+    #     export OPENRESTY_PREFIX="/usr/local/openresty-debug"
+    #     export PATH=$OPENRESTY_PREFIX/nginx/sbin:$OPENRESTY_PREFIX/luajit/bin:$OPENRESTY_PREFIX/bin:$PATH
