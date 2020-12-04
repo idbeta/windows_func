@@ -44,8 +44,8 @@ jobs:
         export PATH=$OPENRESTY_PREFIX/nginx/sbin:$OPENRESTY_PREFIX/luajit/bin:$OPENRESTY_PREFIX/bin:$PATH
 
         yum install -y cpanminus build-essential libncurses5-dev libreadline-dev libssl-dev perl
-        git clone https://github.com/api7/test-toolkit/ t/toolkit
-        cpanm --notest Test::Nginx IPC::Run > build.log 2>&1 || (cat build.log && exit 1)
-        prove -Itest-nginx/lib -I./ -r t/admin/*.t
+
+        pwd
+
 
 
