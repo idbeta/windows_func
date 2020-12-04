@@ -30,10 +30,8 @@ jobs:
 
     - name: run apisix
       run: |
-        mkdir apisix
+        git clone https://github.com/apache/apisix.git
         cd apisix
-        wget https://downloads.apache.org/apisix/2.0/apache-apisix-2.0-src.tgz
-        tar zxvf apache-apisix-2.0-src.tgz
         make deps
         ./bin/apisix start
         curl http://127.0.0.1:9080/apisix/status
