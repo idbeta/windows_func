@@ -47,11 +47,12 @@ jobs:
 
         yum install -y perl-devel
         yum install -y perl-CPAN
-        curl -L http://cpanmin.us | perl - --sudo App::cpanminus
+        
         cpanm --notest Test::Nginx IPC::Run > build.log 2>&1 || (cat build.log && exit 1)
         cpanm install Digest::MD5
         cpanm install Digest::SHA
 
         prove -Itest-nginx/lib -I./ -r t/admin/*.t
-
+        prove -I../test-nginx/lib -I./ -r -s t/config-center-yaml/*.t
+        prove -I../test-nginx/lib -I./ -r -s t/core/*.t
 
