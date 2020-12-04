@@ -45,8 +45,8 @@ jobs:
 
         yum install -y cpanminus build-essential libncurses5-dev libreadline-dev libssl-dev perl
 
-        yum install perl-devel
-        yum install perl-CPAN
+        yum install -y perl-devel
+        yum install -y perl-CPAN
         curl -L http://cpanmin.us | perl - --sudo App::cpanminus
         cpanm --notest Test::Nginx IPC::Run > build.log 2>&1 || (cat build.log && exit 1)
         cpanm install Digest::MD5
