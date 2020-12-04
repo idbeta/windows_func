@@ -16,19 +16,22 @@ jobs:
  
     - name: intall deps
       run: |
-        yum -y install wget tar gcc automake autoconf libtool make
+        sudo yum -y install wget tar gcc automake autoconf libtool make
         wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-        rpm -ivh epel-release-latest-7.noarch.rpm
+        sudo rpm -ivh epel-release-latest-7.noarch.rpm
         wget https://github.com/etcd-io/etcd/releases/download/v3.4.13/etcd-v3.4.13-linux-amd64.tar.gz
-        tar -xvf etcd-v3.4.13-linux-amd64.tar.gz && cd etcd-v3.4.13-linux-amd64 && cp -a etcd etcdctl /usr/bin/
-        yum install yum-utils
-        yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
-        yum install -y openresty curl git gcc luarocks lua-devel which
-        etcd &
+        sudo tar -xvf etcd-v3.4.13-linux-amd64.tar.gz && cd etcd-v3.4.13-linux-amd64 && sudo cp -a etcd etcdctl /usr/bin/
+        sudo yum install -y yum-utils
+        sudo yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
+        sudo yum check-update
+        sudo yum install -y openresty-debug
+        sudo yum install -y openresty
+        sudo yum install -y curl git gcc luarocks lua-devel which
         PATH=$PATH:/usr/local/openresty/luajit/bin:/usr/local/openresty/nginx/sbin:/usr/local/openresty/bin
 
     - name: run apisix
       run: |
+        etcd &
         git clone https://github.com/apache/apisix.git
         cd apisix
         make deps
@@ -38,11 +41,11 @@ jobs:
     - name: run test
       run: |
         export PERL5LIB=.:$PERL5LIB
-        export OPENRESTY_PREFIX="/usr/local/openresty"
+        export OPENRESTY_PREFIX="/usr/local/openresty-debug"
         export PATH=$OPENRESTY_PREFIX/nginx/sbin:$OPENRESTY_PREFIX/luajit/bin:$OPENRESTY_PREFIX/bin:$PATH
 
-        yum install -y cpanminus build-essential libncurses5-dev libreadline-dev libssl-dev perl
-        cpanm --notest Test::Nginx IPC::Run > build.log 2>&1 || (cat build.log && exit 1)
+        sudo yum install -y cpanminus build-essential libncurses5-dev libreadline-dev libssl-dev perl
+        sudo cpanm --notest Test::Nginx IPC::Run > build.log 2>&1 || (cat build.log && exit 1)
 
         cd apisix
         git clone https://github.com/api7/test-toolkit/ t/toolkit
