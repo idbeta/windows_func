@@ -37,17 +37,23 @@ jobs:
         curl http://127.0.0.1:9080/apisix/status
 
 
-    # - name: run admin test
-    #   run: |
-    #     sudo apt install -y cpanminus build-essential libncurses5-dev libreadline-dev libssl-dev etcd
+    - name: run admin test
+      run: |
+        export PERL5LIB=.:$PERL5LIB
+#        export OPENRESTY_PREFIX="/usr/local/openresty-debug"
+        export OPENRESTY_PREFIX="/usr/local/openresty"
+        export PATH=$OPENRESTY_PREFIX/nginx/sbin:$OPENRESTY_PREFIX/luajit/bin:$OPENRESTY_PREFIX/bin:$PATH
 
-    #     yum install perl-devel
-    #     yum install perl-CPAN
-    #     curl -L http://cpanmin.us | perl - --sudo App::cpanminus
-    #     sudo cpanm --notest Test::Nginx IPC::Run > build.log 2>&1 || (cat build.log && exit 1)
-    #     cpanm install Digest::MD5
-    #     cpanm install Digest::SHA
+        yum install -y cpanminus build-essential libncurses5-dev libreadline-dev libssl-dev perl
 
-    #     export PERL5LIB=.:$PERL5LIB
-    #     export OPENRESTY_PREFIX="/usr/local/openresty-debug"
-    #     export PATH=$OPENRESTY_PREFIX/nginx/sbin:$OPENRESTY_PREFIX/luajit/bin:$OPENRESTY_PREFIX/bin:$PATH
+        yum install perl-devel
+        yum install perl-CPAN
+        curl -L http://cpanmin.us | perl - --sudo App::cpanminus
+#        cpanm --notest Test::Nginx IPC::Run > build.log 2>&1 || (cat build.log && exit 1)
+        cpanm --notest Test::Nginx >build.log 2>&1 || (cat build.log && exit 1)
+        cpanm install Digest::MD5
+        cpanm install Digest::SHA
+
+        prove -Itest-nginx/lib -I./ -r t/admin/*.t
+
+
