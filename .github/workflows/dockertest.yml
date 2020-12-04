@@ -49,9 +49,6 @@ jobs:
         yum install -y perl-CPAN
         
         cpanm --notest Test::Nginx IPC::Run > build.log 2>&1 || (cat build.log && exit 1)
-        cpanm install Digest::MD5
-        cpanm install Digest::SHA
-
         git submodule update --init --recursive
         prove -Itest-nginx/lib -I./ -r t/admin/*.t
 
