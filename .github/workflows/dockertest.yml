@@ -40,7 +40,6 @@ jobs:
     - name: run admin test
       run: |
         export PERL5LIB=.:$PERL5LIB
-#        export OPENRESTY_PREFIX="/usr/local/openresty-debug"
         export OPENRESTY_PREFIX="/usr/local/openresty"
         export PATH=$OPENRESTY_PREFIX/nginx/sbin:$OPENRESTY_PREFIX/luajit/bin:$OPENRESTY_PREFIX/bin:$PATH
 
@@ -49,8 +48,7 @@ jobs:
         yum install perl-devel
         yum install perl-CPAN
         curl -L http://cpanmin.us | perl - --sudo App::cpanminus
-#        cpanm --notest Test::Nginx IPC::Run > build.log 2>&1 || (cat build.log && exit 1)
-        cpanm --notest Test::Nginx >build.log 2>&1 || (cat build.log && exit 1)
+        cpanm --notest Test::Nginx IPC::Run > build.log 2>&1 || (cat build.log && exit 1)
         cpanm install Digest::MD5
         cpanm install Digest::SHA
 
