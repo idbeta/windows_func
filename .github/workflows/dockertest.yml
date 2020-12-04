@@ -45,6 +45,8 @@ jobs:
         cpanm --notest Test::Nginx IPC::Run > build.log 2>&1 || (cat build.log && exit 1)
 
         cd apisix
+        git clone https://github.com/api7/test-toolkit/ t/toolkit
+
         prove -Itest-nginx/lib -r t/admin/*.t
         prove -Itest-nginx/lib -r t/certs/*.t
         prove -Itest-nginx/lib -r t/config-center-yaml/*.t
