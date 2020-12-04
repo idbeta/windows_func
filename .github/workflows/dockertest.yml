@@ -52,7 +52,7 @@ jobs:
         cpanm install Digest::MD5
         cpanm install Digest::SHA
 
+        git submodule update --init --recursive
         prove -Itest-nginx/lib -I./ -r t/admin/*.t
-        prove -I../test-nginx/lib -I./ -r -s t/config-center-yaml/*.t
-        prove -I../test-nginx/lib -I./ -r -s t/core/*.t
+
 
