@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
  
-    - name: Intall deps
+    - name: intall deps
       run: |
         yum -y install wget tar gcc automake autoconf libtool make
         wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
@@ -43,9 +43,17 @@ jobs:
 
         yum install -y cpanminus build-essential libncurses5-dev libreadline-dev libssl-dev perl
         cpanm --notest Test::Nginx IPC::Run > build.log 2>&1 || (cat build.log && exit 1)
-        
+
         cd apisix
-        make test
-
-
-
+        prove -Itest-nginx/lib -r t/admin/*.t
+        prove -Itest-nginx/lib -r t/certs/*.t
+        prove -Itest-nginx/lib -r t/config-center-yaml/*.t
+        prove -Itest-nginx/lib -r t/debug/*.t
+        prove -Itest-nginx/lib -r t/discovery/*.t
+        prove -Itest-nginx/lib -r t/node/*.t
+        prove -Itest-nginx/lib -r t/plugin/*.t
+        prove -Itest-nginx/lib -r t/router/*.t
+        prove -Itest-nginx/lib -r t/script/*.t
+        prove -Itest-nginx/lib -r t/stream-node/*.t
+        prove -Itest-nginx/lib -r t/stream-plugin/*.t
+        prove -Itest-nginx/lib -r t/utils/*.t
