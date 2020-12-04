@@ -26,7 +26,7 @@ jobs:
         yum install -y openresty curl git gcc luarocks lua-devel which
         etcd &
         PATH=$PATH:/usr/local/openresty/luajit/bin:/usr/local/openresty/nginx/sbin:/usr/local/openresty/bin
-        
+
 
     - name: run apisix
       run: |
@@ -44,9 +44,6 @@ jobs:
         export PATH=$OPENRESTY_PREFIX/nginx/sbin:$OPENRESTY_PREFIX/luajit/bin:$OPENRESTY_PREFIX/bin:$PATH
 
         yum install -y cpanminus build-essential libncurses5-dev libreadline-dev libssl-dev perl
-        
-        cpanm --notest Test::Nginx IPC::Run > build.log 2>&1 || (cat build.log && exit 1)
-        git submodule update --init --recursive
-        prove -Itest-nginx/lib -I./ -r t/admin/*.t
+
 
 
