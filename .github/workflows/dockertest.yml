@@ -17,9 +17,9 @@ jobs:
     - name: intall deps
       run: |
         yum install -y wget tar gcc automake autoconf libtool make
-        yum install -y curl git luarocks lua-devel which
         wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
         rpm -ivh epel-release-latest-7.noarch.rpm
+        yum install -y curl git luarocks lua-devel which
         wget https://github.com/etcd-io/etcd/releases/download/v3.4.13/etcd-v3.4.13-linux-amd64.tar.gz
         tar -xvf etcd-v3.4.13-linux-amd64.tar.gz && cd etcd-v3.4.13-linux-amd64 && cp -a etcd etcdctl /usr/bin/
         cd ..
