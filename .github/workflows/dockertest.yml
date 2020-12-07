@@ -42,9 +42,7 @@ jobs:
 
         yum install -y cpanminus build-essential libncurses5-dev libreadline-dev libssl-dev perl
         cpanm --notest Test::Nginx IPC::Run > build.log 2>&1 || (cat build.log && exit 1)
-        make test
         
         git clone https://github.com/api7/test-toolkit/ t/toolkit
-
         prove -Itest-nginx/lib -r t/admin/*.t
 
