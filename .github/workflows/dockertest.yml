@@ -10,6 +10,44 @@ jobs:
   test_apisix:
     name: test_apisix
     runs-on: ubuntu-latest
+
+    services:
+      etcd:
+        image: bitnami/etcd:3.4.13
+        ports:
+          - 2379:2379
+          - 2380:2380
+        env:
+          ALLOW_NONE_AUTHENTICATION: yes
+
+      redis:
+        image: redis:3.0-alpine
+        ports:
+          - 6379:6379
+        env:
+          ALLOW_NONE_AUTHENTICATION: yes
+
+      zookeeper:
+        image: bitnami/zookeeper:3.6.0
+        ports:
+          - 2181:2181
+        env:
+          ALLOW_NONE_AUTHENTICATION: yes
+
+      kafka:
+        image: bitnami/kafka:latest
+        ports:
+          - 9092:9092
+        env:
+          ALLOW_NONE_AUTHENTICATION: yes
+
+      eureka:
+        image: bitinit/eureka
+        ports:
+          - 8761:8761
+        env:
+          ALLOW_NONE_AUTHENTICATION: yes
+
     container: docker.io/centos:7
     steps:
     - uses: actions/checkout@v2
@@ -20,10 +58,6 @@ jobs:
         wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
         rpm -ivh epel-release-latest-7.noarch.rpm
         yum install -y curl git luarocks lua-devel which
-        wget https://github.com/etcd-io/etcd/releases/download/v3.4.13/etcd-v3.4.13-linux-amd64.tar.gz
-        tar -xvf etcd-v3.4.13-linux-amd64.tar.gz && cd etcd-v3.4.13-linux-amd64 && cp -a etcd etcdctl /usr/bin/
-        cd ..
-        etcd &
         yum install -y yum-utils
         yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
         yum install -y openresty-debug
@@ -43,5 +77,5 @@ jobs:
         export OPENRESTY_PREFIX="/usr/local/openresty-debug"
         export PATH=$OPENRESTY_PREFIX/nginx/sbin:$OPENRESTY_PREFIX/luajit/bin:$OPENRESTY_PREFIX/bin:$PATH
 
-        make test
+        prove -Itest-nginx/lib -r t/admin/*.t
         
