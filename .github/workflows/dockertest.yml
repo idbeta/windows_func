@@ -77,5 +77,5 @@ jobs:
         export OPENRESTY_PREFIX="/usr/local/openresty-debug"
         export PATH=$OPENRESTY_PREFIX/nginx/sbin:$OPENRESTY_PREFIX/luajit/bin:$OPENRESTY_PREFIX/bin:$PATH
 
-        prove -Itest-nginx/lib -r t/admin/*.t
+        prove -Itest-nginx/lib -I./ -r t/admin/*.t
         
