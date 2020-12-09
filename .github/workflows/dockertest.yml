@@ -66,12 +66,13 @@ jobs:
 
     - name: run test
       run: |
-        yum install -y cpanminus build-essential libncurses5-dev libreadline-dev libssl-dev perl
-        cpanm --notest Test::Nginx IPC::Run > build.log 2>&1 || (cat build.log && exit 1)
-
         git clone https://github.com/apache/apisix.git
         cd apisix
         make deps
+
+        yum install -y cpanminus build-essential libncurses5-dev libreadline-dev libssl-dev perl
+        cpanm --notest Test::Nginx IPC::Run > build.log 2>&1 || (cat build.log && exit 1)
+        git clone https://github.com/api7/test-toolkit/ t/toolkit
 
         export PERL5LIB=.:$PERL5LIB
         export OPENRESTY_PREFIX="/usr/local/openresty-debug"
