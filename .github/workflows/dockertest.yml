@@ -42,5 +42,6 @@ jobs:
 
         yum install -y cpanminus build-essential libncurses5-dev libreadline-dev libssl-dev perl
         cpanm --notest Test::Nginx IPC::Run > build.log 2>&1 || (cat build.log && exit 1)
-        
+
+        git submodule update --init --recursive
         prove -Itest-nginx/lib -I./ -r t/admin/*.t
