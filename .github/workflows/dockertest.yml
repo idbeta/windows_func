@@ -26,5 +26,5 @@ jobs:
 
         
         docker exec centos7 bash -c 'echo "export PATH=$PATH:/usr/local/openresty/luajit/bin:/usr/local/openresty/nginx/sbin:/usr/local/openresty/bin" >> /etc/profile && source /etc/profile'
-        docker exec centos7 bash -c "cat /etc/profile"
+        docker exec centos7 bash -c "export"
 
