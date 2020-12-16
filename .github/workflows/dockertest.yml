@@ -23,11 +23,8 @@ jobs:
         docker exec centos7 bash -c "yum install -y yum-utils && yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo"
         docker exec centos7 bash -c "yum install -y openresty-debug && yum install -y openresty"
 
-        
-
-        
-
-        docker exec centos7 bash -c 'echo $"export PATH=$PATH:/usr/local/openresty/luajit/bin:/usr/local/openresty/nginx/sbin:/usr/local/openresty/bin" >> ~/.bash_profile'
-        docker exec centos7 bash -c "source ~/.bash_profile"
+      
+        docker exec centos7 bash -c 'echo $"export PATH=$PATH:/usr/local/openresty/luajit/bin:/usr/local/openresty/nginx/sbin:/usr/local/openresty/bin" >> /etc/profile'
+        docker exec centos7 bash -c "source /etc/profile"
         docker exec centos7 bash -c "export"
 
