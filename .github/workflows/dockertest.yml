@@ -13,6 +13,16 @@ jobs:
     name: test_apisix_on_centos7
     runs-on: ubuntu-latest
     
+    services:
+      etcd:
+        image: bitnami/etcd:3.4.0
+        ports:
+          - 2379:2379
+          - 2380:2380
+        env:
+          ALLOW_NONE_AUTHENTICATION: yes
+          ETCD_ADVERTISE_CLIENT_URLS: http://0.0.0.0:2379
+
     steps:
     - uses: actions/checkout@v2
     - name: run centos7 docker and install dependencies 
@@ -20,9 +30,7 @@ jobs:
         docker pull centos:7
         docker run -itd --name centos7Instance --net="host" --restart=always docker.io/centos:7 /bin/bash
         docker exec centos7Instance bash -c "yum install -y wget tar gcc automake autoconf libtool make && wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && rpm -ivh epel-release-latest-7.noarch.rpm"
-        docker exec centos7Instance bash -c "yum install -y curl git luarocks lua-devel which && wget https://github.com/etcd-io/etcd/releases/download/v3.4.13/etcd-v3.4.13-linux-amd64.tar.gz"
-        docker exec centos7Instance bash -c "tar -xvf etcd-v3.4.13-linux-amd64.tar.gz && cd etcd-v3.4.13-linux-amd64 && cp -a etcd etcdctl /usr/bin/ && cd .. && etcd &"
-        docker exec centos7Instance bash -c "yum install -y yum-utils && yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo"
+        docker exec centos7Instance bash -c "yum install -y curl git luarocks lua-devel which && wget https://github.com/etcd-io/etcd/releases/download/v3.4.13/etcd-v3.4.13-linux-amd64.tar.gz"        docker exec centos7Instance bash -c "yum install -y yum-utils && yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo"
         docker exec centos7Instance bash -c "yum install -y openresty-debug"
 
     - name: run other docker containers for test
