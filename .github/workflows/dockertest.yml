@@ -16,7 +16,7 @@ jobs:
     - name: run centos7 docker
       run: |
         docker pull centos:7
-        docker run --name centos7 -d docker.io/centos:7
+        docker run -dit --hostname centos7 --name centos7 --restart=always docker.io/centos:7 /bin/bash
         docker exec centos7 bash -c "yum install -y wget tar gcc automake autoconf libtool make && wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && rpm -ivh epel-release-latest-7.noarch.rpm"
         docker exec centos7 bash -c "yum install -y curl git luarocks lua-devel which && wget https://github.com/etcd-io/etcd/releases/download/v3.4.13/etcd-v3.4.13-linux-amd64.tar.gz"
         docker exec centos7 bash -c "tar -xvf etcd-v3.4.13-linux-amd64.tar.gz && cd etcd-v3.4.13-linux-amd64 && cp -a etcd etcdctl /usr/bin/ && cd .. && etcd &"
