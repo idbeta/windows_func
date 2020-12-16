@@ -35,13 +35,13 @@ jobs:
         docker exec centos7 bash -c "git clone https://github.com/apache/apisix.git"
         docker exec centos7 bash -c "cd apisix && make deps"
 
-        docker exec centos7 bash -c 'echo "export PERL5LIB=.:$PERL5LIB" >> /etc/profile'
+ 
         docker exec centos7 bash -c 'echo "export OPENRESTY_PREFIX="/usr/local/openresty-debug" >> /etc/profile'
         docker exec centos7 bash -c 'echo "export PATH=$OPENRESTY_PREFIX/nginx/sbin:$OPENRESTY_PREFIX/luajit/bin:$OPENRESTY_PREFIX/bin:$PATH" >> /etc/profile'
         docker exec centos7 bash -c "cat /etc/profile"
         docker exec centos7 bash -c "source /etc/profile"
         docker exec centos7 bash -c "export"
-        
+
         docker exec centos7 bash -c "yum install -y cpanminus build-essential libncurses5-dev libreadline-dev libssl-dev perl"
         docker exec centos7 bash -c "cpanm --notest Test::Nginx IPC::Run > build.log 2>&1 || (cat build.log && exit 1)"
         docker exec centos7 bash -c "export"
