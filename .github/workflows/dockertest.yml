@@ -21,26 +21,13 @@ jobs:
         docker exec centos7 bash -c "yum install -y curl git luarocks lua-devel which && wget https://github.com/etcd-io/etcd/releases/download/v3.4.13/etcd-v3.4.13-linux-amd64.tar.gz"
         docker exec centos7 bash -c "tar -xvf etcd-v3.4.13-linux-amd64.tar.gz && cd etcd-v3.4.13-linux-amd64 && cp -a etcd etcdctl /usr/bin/ && cd .. && etcd &"
         docker exec centos7 bash -c "yum install -y yum-utils && yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo"
-        docker exec centos7 bash -c "yum install -y openresty-debug && yum install -y openresty"
-
-
-
-        docker exec centos7 bash -c 'echo "export PATH=$PATH:/usr/local/openresty/luajit/bin:/usr/local/openresty/nginx/sbin:/usr/local/openresty/bin" >> /etc/profile'
-        docker exec centos7 bash -c "cat /etc/profile"
-        docker exec centos7 bash -c "source /etc/profile"
-        docker exec centos7 bash -c "export"
+        docker exec centos7 bash -c "yum install -y openresty-debug"
 
     - name: run test
       run: |
         docker exec centos7 bash -c "git clone https://github.com/apache/apisix.git"
         docker exec centos7 bash -c "cd apisix && make deps"
-
-        docker exec centos7 bash -c 'echo "export PERL5LIB=.:$PERL5LIB" >> /etc/profile'
-        docker exec centos7 bash -c 'echo "export PATH=/usr/local/openresty-debug/nginx/sbin:/usr/local/openresty-debug/luajit/bin:/usr/local/openresty-debug/bin:$PATH" >> /etc/profile'
-        docker exec centos7 bash -c "cat /etc/profile"
-        docker exec centos7 bash -c "source /etc/profile"
-        docker exec centos7 bash -c "export"
-
         docker exec centos7 bash -c "yum install -y cpanminus build-essential libncurses5-dev libreadline-dev libssl-dev perl"
-        docker exec centos7 bash -c "cpanm --notest Test::Nginx IPC::Run > build.log 2>&1 || (cat build.log && exit 1)"
+        docker exec centos7 bash -c "PATH=/usr/local/openresty-debug/nginx/sbin:/usr/local/openresty-debug/luajit/bin:/usr/local/openresty-debug/bin:$PATH cpanm --notest Test::Nginx IPC::Run > build.log 2>&1 || (cat build.log && exit 1)"
         docker exec centos7 bash -c "cd apisix && prove -Itest-nginx/lib -I./ -r t/admin/*.t"
+
