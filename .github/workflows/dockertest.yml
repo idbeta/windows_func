@@ -2,18 +2,20 @@ name: test_apisix_on_centos7
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
 
 jobs:     
   test_apisix:
-    name: test_apisix
+    name: test_apisix_on_centos7
     runs-on: ubuntu-latest
     
     steps:
     - uses: actions/checkout@v2
-    - name: run centos7 docker
+    - name: run centos7 docker and install dependencies 
       run: |
         docker pull centos:7
         docker run -itd --name centos7Instance --net="host" --restart=always docker.io/centos:7 /bin/bash
@@ -36,7 +38,7 @@ jobs:
         docker exec -i kafka-server1 /opt/bitnami/kafka/bin/kafka-topics.sh --create --zookeeper zookeeper-server:2181 --replication-factor 1 --partitions 1 --topic test2
         docker run --rm --name skywalking -d --net="host" -p 1234:1234 -p 11800:11800 -p 12800:12800 apache/skywalking-oap-server
 
-    - name: run test
+    - name: run test cases
       run: |
         docker exec centos7Instance bash -c "git clone https://github.com/apache/apisix.git"
         docker exec centos7Instance bash -c "cd apisix && make deps"
