@@ -26,7 +26,8 @@ jobs:
 
     - name: run test
       run: |
-        docker exec centos7 bash -c "git clone https://github.com/apache/apisix.git && cd apisix && make deps"
+        docker exec centos7 bash -c "git clone https://github.com/apache/apisix.git"
+        docker exec centos7 bash -c "cd apisix && make deps"
         docker exec centos7 bash -c "export PERL5LIB=.:$PERL5LIB"
         docker exec centos7 bash -c 'export OPENRESTY_PREFIX="/usr/local/openresty-debug"'
         docker exec centos7 bash -c "export PATH=$OPENRESTY_PREFIX/nginx/sbin:$OPENRESTY_PREFIX/luajit/bin:$OPENRESTY_PREFIX/bin:$PATH"
