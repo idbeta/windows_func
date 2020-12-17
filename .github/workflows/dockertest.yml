@@ -37,7 +37,7 @@ jobs:
       run: |
         docker run -itd --name centos7Instance --net="host" --restart=always docker.io/centos:7
         docker exec centos7Instance bash -c "yum install -y wget tar gcc automake autoconf libtool make && wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && rpm -ivh epel-release-latest-7.noarch.rpm"
-        docker exec centos7Instance bash -c "yum install -y curl git luarocks lua-devel which && wget https://github.com/etcd-io/etcd/releases/download/v3.4.13/etcd-v3.4.13-linux-amd64.tar.gz"
+        docker exec centos7Instance bash -c "yum install -y curl git luarocks lua-devel which"
         docker exec centos7Instance bash -c "yum install -y yum-utils && yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo"
         docker exec centos7Instance bash -c "yum install -y openresty-debug"
 
