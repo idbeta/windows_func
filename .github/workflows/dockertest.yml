@@ -35,7 +35,6 @@ jobs:
     steps:
     - name: run centos7 docker and install dependencies 
       run: |
-        docker pull centos:7
         docker run -itd --name centos7Instance --net="host" --restart=always docker.io/centos:7
         docker exec centos7Instance bash -c "yum install -y wget tar gcc automake autoconf libtool make && wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && rpm -ivh epel-release-latest-7.noarch.rpm"
         docker exec centos7Instance bash -c "yum install -y curl git luarocks lua-devel which && wget https://github.com/etcd-io/etcd/releases/download/v3.4.13/etcd-v3.4.13-linux-amd64.tar.gz"
@@ -61,5 +60,4 @@ jobs:
         docker exec centos7Instance bash -c "git clone https://github.com/apache/apisix.git"
         docker exec centos7Instance bash -c "cd apisix && make deps && git submodule update --init --recursive"
         docker exec centos7Instance bash -c "PATH=/usr/local/openresty-debug/nginx/sbin:/usr/local/openresty-debug/luajit/bin:/usr/local/openresty-debug/bin:$PATH cpanm --notest Test::Nginx IPC::Run > build.log 2>&1 || (cat build.log && exit 1)"
-        docker exec centos7Instance bash -c "cd apisix && PATH=/usr/local/openresty-debug/nginx/sbin:/usr/local/openresty-debug/bin:$PATH prove -Itest-nginx/lib -I./ -r t/admin/*.t"
-        
+        docker exec centos7Instance bash -c "curl http://127.0.0.1:2379 -i"
