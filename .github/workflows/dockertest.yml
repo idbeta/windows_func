@@ -61,7 +61,7 @@ jobs:
         -e ETCD_KEY_FILE=/certs/etcd.key \
         -e GITHUB_ACTIONS=true \
         -e CI=true \
-        -v ${{ github.workspace }}/t/certs:/certs \
+        -v /apisix/t/certs:/certs \
         bitnami/etcd:3.4.0
 
     - name: run centos7 docker and install dependencies 
