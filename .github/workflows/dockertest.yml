@@ -67,4 +67,4 @@ jobs:
     - name: run centos7 docker and install dependencies 
       run: |
         pwd
-        ls -l
+        ls
