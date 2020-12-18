@@ -64,9 +64,11 @@ jobs:
         -v /apisix/t/certs:/certs \
         bitnami/etcd:3.4.0
 
-    - name: Checkout
-        uses: actions/checkout@v2
-        
+    - name: Check out code
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
     - name: run centos7 docker and install dependencies 
       run: |
         pwd
