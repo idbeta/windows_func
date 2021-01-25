@@ -24,8 +24,8 @@ jobs:
       run: |
         git clone https://github.com/apache/apisix.git
         cd apisix
-        make init
         make deps
+        make init
         make run
 
     - name: test apisix
