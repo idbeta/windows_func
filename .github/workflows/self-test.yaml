@@ -35,7 +35,6 @@ jobs:
     
     - name: clean
       run: |
-        pwd
         cd apisix
         make stop
         cd ..
