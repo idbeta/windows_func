@@ -22,5 +22,5 @@ jobs:
 
     - name: run test apisix
       run: |
-        wrk -c100 -d30 -t1 --latency http://127.0.0.1:9080/index.html > ~/work/apisix/apisix/utils/performance.log
-        grep "^Requests/sec:" ~/work/apisix/apisix/utils/performance.log | awk {'print int($2)'}
+        wrk -c100 -d30 -t1 --latency http://127.0.0.1:9080/index.html > ~/performance.log
+        grep "^Requests/sec:" ~/performance.log | awk {'print int($2)'}
