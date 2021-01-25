@@ -1,4 +1,4 @@
-name: test_apisix_on_centos7
+name: self-test
 
 on:
   push:
@@ -10,31 +10,32 @@ on:
 
 jobs:     
   test_apisix:
-    name: test_apisix_on_centos7
+    name: self-test
     runs-on: self-hosted
     steps:
 
-    - name: run wrk test
-      run: |
-        sysbench cpu --cpu-max-prime=20000 --threads=1 run > ~/sysbench.log
-        grep ".*total number of events:" ~/sysbench.log | awk {'print int($5)'}
-        cat /proc/cpuinfo | grep 'model name'
+    # - name: run wrk test
+    #   run: |
+    #     sysbench cpu --cpu-max-prime=20000 --threads=1 run > ~/sysbench.log
+    #     grep ".*total number of events:" ~/sysbench.log | awk {'print int($5)'}
+    #     cat /proc/cpuinfo | grep 'model name'
 
-    - name: run apisix
-      run: |
-        git clone https://github.com/apache/apisix.git
-        cd apisix
-        make deps
-        make init
-        make run
+    # - name: run apisix
+    #   run: |
+    #     git clone https://github.com/apache/apisix.git
+    #     cd apisix
+    #     make deps
+    #     make init
+    #     make run
 
-    - name: test apisix
-      run: |
-        wrk -c100 -d30 -t1 --latency http://127.0.0.1:9080/index.html > ~/performance.log
-        grep "^Requests/sec:" ~/performance.log | awk {'print int($2)'}
+    # - name: test apisix
+    #   run: |
+    #     wrk -c100 -d30 -t1 --latency http://127.0.0.1:9080/index.html > ~/performance.log
+    #     grep "^Requests/sec:" ~/performance.log | awk {'print int($2)'}
     
     - name: clean
       run: |
+        pwd
         cd apisix
         make stop
         cd ..
