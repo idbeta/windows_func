@@ -20,7 +20,24 @@ jobs:
         grep ".*total number of events:" ~/sysbench.log | awk {'print int($5)'}
         cat /proc/cpuinfo | grep 'model name'
 
-    - name: run test apisix
+    - name: run apisix
+      run: |
+        git clone https://github.com/apache/apisix.git
+        cd apisix
+        make init
+        make deps
+        make run
+
+    - name: test apisix
       run: |
         wrk -c100 -d30 -t1 --latency http://127.0.0.1:9080/index.html > ~/performance.log
         grep "^Requests/sec:" ~/performance.log | awk {'print int($2)'}
+    
+    - name: clean
+      run: |
+        cd apisix
+        make stop
+        cd ..
+        rm -rf ./apisix
+        etcdctl del --prefix "/apisix"
+
