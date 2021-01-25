@@ -1,0 +1,26 @@
+name: test_apisix_on_centos7
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:     
+  test_apisix:
+    name: test_apisix_on_centos7
+    runs-on: self-hosted
+    steps:
+
+    - name: run wrk test
+      run: |
+        sysbench cpu --cpu-max-prime=20000 --threads=1 run > ~/sysbench.log
+        grep ".*total number of events:" ~/sysbench.log | awk {'print int($5)'}
+        cat /proc/cpuinfo | grep 'model name'
+
+    - name: run test apisix
+      run: |
+        wrk -c100 -d30 -t1 --latency http://127.0.0.1:9080/index.html > ~/work/apisix/apisix/utils/performance.log
+        grep "^Requests/sec:" ~/work/apisix/apisix/utils/performance.log | awk {'print int($2)'}
