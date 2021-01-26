@@ -13,43 +13,46 @@ jobs:
     name: self-test
     runs-on: self-hosted
     steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
 
-    - name: run wrk test
-      run: |
-        sysbench cpu --cpu-max-prime=20000 --threads=1 run > ${PWD}/performance.log
-        grep ".*total number of events:" ${PWD}/performance.log| awk {'print int($5)'}
-        cat /proc/cpuinfo | grep 'model name'
+    # - name: run wrk test
+    #   run: |
+    #     sysbench cpu --cpu-max-prime=20000 --threads=1 run > ${PWD}/performance.log
+    #     grep ".*total number of events:" ${PWD}/performance.log| awk {'print int($5)'}
+    #     cat /proc/cpuinfo | grep 'model name'
 
-    - name: run apisix
-      run: |
-        git clone https://github.com/apache/apisix.git
-        cd apisix
-        make deps
-        make init
-        make run
-        curl -i http://127.0.0.1:9080/apisix/admin/routes/1 \
-        -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1' \
-        -X PUT -d '
-        {
-            "uri": "/index.html",
-            "upstream": {
-                "type": "roundrobin",
-                "nodes": {
-                    "127.0.0.1:80": 1
-                }
-            }
-        }'
+    # - name: run apisix
+    #   run: |
+    #     git clone https://github.com/apache/apisix.git
+    #     cd apisix
+    #     make deps
+    #     make init
+    #     make run
+    #     curl -i http://127.0.0.1:9080/apisix/admin/routes/1 \
+    #     -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1' \
+    #     -X PUT -d '
+    #     {
+    #         "uri": "/index.html",
+    #         "upstream": {
+    #             "type": "roundrobin",
+    #             "nodes": {
+    #                 "127.0.0.1:80": 1
+    #             }
+    #         }
+    #     }'
 
-    - name: test apisix
-      run: |
-        wrk -c100 -d30 -t1 --latency http://127.0.0.1:9080/index.html > ${PWD}/performance.log
-        grep "^Requests/sec:" ${PWD}/performance.log | awk {'print int($2)'}
+    # - name: test apisix
+    #   run: |
+    #     wrk -c100 -d30 -t1 --latency http://127.0.0.1:9080/index.html > ${PWD}/performance.log
+    #     grep "^Requests/sec:" ${PWD}/performance.log | awk {'print int($2)'}
     
-    - name: clean
-      run: |
-        cd apisix
-        make stop
-        cd ..
-        rm -rf ./apisix
-        etcdctl del --prefix "/apisix"
-
+    # - name: clean
+    #   run: |
+    #     cd apisix
+    #     make stop
+    #     cd ..
+    #     rm -rf ./apisix
+    #     etcdctl del --prefix "/apisix"
